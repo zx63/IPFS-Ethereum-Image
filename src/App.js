@@ -8,7 +8,7 @@ import './css/pure-min.css'
 import './App.css'
 
 const ipfsAPI = require('ipfs-api');
-const ipfs = ipfsAPI({host: 'localhost', port: '5001', protocol: 'http'});
+const ipfs = ipfsAPI({host: '116.85.36.174', port: '5001', protocol: 'http'});
 
 const contract = require('truffle-contract')
 const simpleStorage = contract(SimpleStorageContract)
@@ -70,7 +70,7 @@ class App extends Component {
     simpleStorage.setProvider(this.state.web3.currentProvider);
     this.state.web3.eth.getAccounts((error, accounts) => {
       account = accounts[0];
-      simpleStorage.at('0x66e9bbfe244799149a9c4eb708a34ea7c9ce67e2').then((contract) => {
+      simpleStorage.at('0xe27c16b50847d87cf03fdc6bec3788d5647bee8e').then((contract) => {
         console.log(contract.address);
         contractInstance = contract;
         this.setState({address: contractInstance.address});
@@ -144,10 +144,8 @@ class App extends Component {
       {
         this.state.blockChainHash
           ? <div>
-              <h2>浏览器访问：{"http://localhost:8080/ipfs/" + this.state.imgHash}</h2>
-              <img alt="" style={{
-                  width: 1600
-                }} src={"http://localhost:8080/ipfs/" + this.state.imgHash}/>
+              <h2>浏览器访问：{"http://116.85.36.174:8080/ipfs/" + this.state.imgHash}</h2>
+              <img alt="" src={"http://116.85.36.174:8080/ipfs/" + this.state.imgHash}/>
             </div>
           : <img alt=""/>
       }
