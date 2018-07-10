@@ -1,13 +1,13 @@
 pragma solidity ^0.4.18;
 
 contract SimpleStorage {
-    string storedData; // 存储图片hash
-
-    function set(string x) public {
-        storedData = x;
+    mapping(uint => string) storedData;
+    
+    function set(uint hash, string ipfs) public {
+        storedData[hash] = ipfs;
     }
 
-    function get() view public returns (string x) {
-        return storedData;
+    function get(uint hash) view public returns (string ipfs) {
+        ipfs = storedData[hash];
     }
 }

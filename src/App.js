@@ -38,7 +38,8 @@ class App extends Component {
       blockChainHash: null,
       web3: null,
       address: null,
-      imgHash: null,
+      ethTag : null,
+      ipfsTag : null,
       isWriteSuccess: false
     }
   }
@@ -70,7 +71,7 @@ class App extends Component {
     simpleStorage.setProvider(this.state.web3.currentProvider);
     this.state.web3.eth.getAccounts((error, accounts) => {
       account = accounts[0];
-      simpleStorage.at('0xe27c16b50847d87cf03fdc6bec3788d5647bee8e').then((contract) => {
+      simpleStorage.at('0x78d915d61dbd365c2f7fb7bf95abe10bcfd7a989').then((contract) => {
         console.log(contract.address);
         contractInstance = contract;
         this.setState({address: contractInstance.address});
@@ -86,7 +87,7 @@ class App extends Component {
           ? <h1>合约地址：{this.state.address}</h1>
           : <div/>
       }
-      <h2>上传图片到IPFS：</h2>
+      <h2>上传文件到IPFS：</h2>
       <div>
         <label id="file">Choose file to upload</label>
         <input type="file" ref="file" id="file" name="file" multiple="multiple"/>
@@ -99,25 +100,26 @@ class App extends Component {
             reader.readAsArrayBuffer(file)
             reader.onloadend = function(e) {
               console.log(reader);
-              saveImageOnIpfs(reader).then((hash) => {
-                console.log(hash);
-                this.setState({imgHash: hash})
+              saveImageOnIpfs(reader).then((ipfsHashValue) => {
+                console.log(ipfsHashValue);
+                this.setState({ipfsTag: ipfsHashValue});
+                this.setState({ethTag: });
               });
 
             }.bind(this);
 
-          }}>将图片上传到IPFS并返回图片HASH</button>
+          }}>将文件上传到IPFS并返回文件HASH</button>
       </div>
       {
-        this.state.imgHash
+        this.state.ipfsTag
           ? <div>
-              <h2>imgHash：{this.state.imgHash}</h2>
+              <h2>ipfsTag：{this.state.ipfsTag}</h2>
               <button onClick={() => {
-                  contractInstance.set(this.state.imgHash, {from: account}).then(() => {
+                  contractInstance.set(1, this.state.ipfsTag, {from: account}).then(() => {
                     console.log('图片的hash已经写入到区块链！');
                     this.setState({isWriteSuccess: true});
                   })
-                }}>将图片hash写到区块链：contractInstance.set(imgHash)</button>
+                }}>将图片hash写到区块链：contractInstance.set(ethTag, ipfsTag)</button>
             </div>
           : <div/>
       }
@@ -126,11 +128,11 @@ class App extends Component {
           ? <div>
               <h1>图片的hash已经写入到区块链！</h1>
               <button onClick={() => {
-                  contractInstance.get({from: account}).then((data) => {
+                  contractInstance.get(1, {from: account}).then((data) => {
                     console.log(data);
                     this.setState({blockChainHash: data});
                   })
-                }}>从区块链读取图片hash：contractInstance.get()</button>
+                }}>从区块链读取图片hash：contractInstance.get(ethTag)</button>
             </div>
           : <div/>
       }
@@ -144,8 +146,8 @@ class App extends Component {
       {
         this.state.blockChainHash
           ? <div>
-              <h2>浏览器访问：{"http://116.85.36.174:8080/ipfs/" + this.state.imgHash}</h2>
-              <img alt="" src={"http://116.85.36.174:8080/ipfs/" + this.state.imgHash}/>
+              <h2>浏览器访问：{"http://116.85.36.174:8080/ipfs/" + this.state.ipfsTag}</h2>
+              <img alt="" src={"http://116.85.36.174:8080/ipfs/" + this.state.ipfsTag}/>
             </div>
           : <img alt=""/>
       }
